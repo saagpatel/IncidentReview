@@ -8,4 +8,4 @@
 
 > `const` **BackupFileEntrySchema**: `ZodObject`\<\{ `bytes`: `ZodNumber`; `rel_path`: `ZodString`; `sha256`: `ZodString`; \}, `$strip`\>
 
-Defined in: [src/lib/schemas.ts:330](https://github.com/saagpatel/IncidentReview/blob/7dc21b3c9e6aea21725f6b6423572d38b0cfba7d/src/lib/schemas.ts#L330)
+Defined in: [src/lib/schemas.ts:330](https://github.com/saagpatel/IncidentReview/blob/62f6666f7da35ca351b9e7e8e3767b0ccadae45b/src/lib/schemas.ts#L330)
