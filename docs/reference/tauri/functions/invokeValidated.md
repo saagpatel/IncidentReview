@@ -8,7 +8,7 @@
 
 > **invokeValidated**\<`T`\>(`command`, `args`, `schema`): `Promise`\<`T`\>
 
-Defined in: [src/lib/tauri.ts:91](https://github.com/saagpatel/IncidentReview/blob/0e2d0e4b49c7d6af9d6183f418bd05b1e0fe7fe9/src/lib/tauri.ts#L91)
+Defined in: [src/lib/tauri.ts:91](https://github.com/saagpatel/IncidentReview/blob/7dc21b3c9e6aea21725f6b6423572d38b0cfba7d/src/lib/tauri.ts#L91)
 
 ## Type Parameters
 

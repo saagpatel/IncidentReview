@@ -8,4 +8,4 @@
 
 > `const` **BuildChunksResultSchema**: `ZodObject`\<\{ `chunk_count`: `ZodNumber`; `source_id`: `ZodOptional`\<`ZodNullable`\<`ZodString`\>\>; `updated_at`: `ZodString`; \}, `$strip`\>
 
-Defined in: [src/lib/schemas.ts:261](https://github.com/saagpatel/IncidentReview/blob/0e2d0e4b49c7d6af9d6183f418bd05b1e0fe7fe9/src/lib/schemas.ts#L261)
+Defined in: [src/lib/schemas.ts:261](https://github.com/saagpatel/IncidentReview/blob/7dc21b3c9e6aea21725f6b6423572d38b0cfba7d/src/lib/schemas.ts#L261)

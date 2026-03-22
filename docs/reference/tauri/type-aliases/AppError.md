@@ -8,7 +8,7 @@
 
 > **AppError** = `object`
 
-Defined in: [src/lib/tauri.ts:4](https://github.com/saagpatel/IncidentReview/blob/0e2d0e4b49c7d6af9d6183f418bd05b1e0fe7fe9/src/lib/tauri.ts#L4)
+Defined in: [src/lib/tauri.ts:4](https://github.com/saagpatel/IncidentReview/blob/7dc21b3c9e6aea21725f6b6423572d38b0cfba7d/src/lib/tauri.ts#L4)
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: [src/lib/tauri.ts:4](https://github.com/saagpatel/IncidentReview/blo
 
 > **code**: `string`
 
-Defined in: [src/lib/tauri.ts:5](https://github.com/saagpatel/IncidentReview/blob/0e2d0e4b49c7d6af9d6183f418bd05b1e0fe7fe9/src/lib/tauri.ts#L5)
+Defined in: [src/lib/tauri.ts:5](https://github.com/saagpatel/IncidentReview/blob/7dc21b3c9e6aea21725f6b6423572d38b0cfba7d/src/lib/tauri.ts#L5)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [src/lib/tauri.ts:5](https://github.com/saagpatel/IncidentReview/blo
 
 > `optional` **details**: `unknown`
 
-Defined in: [src/lib/tauri.ts:7](https://github.com/saagpatel/IncidentReview/blob/0e2d0e4b49c7d6af9d6183f418bd05b1e0fe7fe9/src/lib/tauri.ts#L7)
+Defined in: [src/lib/tauri.ts:7](https://github.com/saagpatel/IncidentReview/blob/7dc21b3c9e6aea21725f6b6423572d38b0cfba7d/src/lib/tauri.ts#L7)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [src/lib/tauri.ts:7](https://github.com/saagpatel/IncidentReview/blo
 
 > **message**: `string`
 
-Defined in: [src/lib/tauri.ts:6](https://github.com/saagpatel/IncidentReview/blob/0e2d0e4b49c7d6af9d6183f418bd05b1e0fe7fe9/src/lib/tauri.ts#L6)
+Defined in: [src/lib/tauri.ts:6](https://github.com/saagpatel/IncidentReview/blob/7dc21b3c9e6aea21725f6b6423572d38b0cfba7d/src/lib/tauri.ts#L6)
 
 ***
 
@@ -40,4 +40,4 @@ Defined in: [src/lib/tauri.ts:6](https://github.com/saagpatel/IncidentReview/blo
 
 > `optional` **retryable**: `boolean`
 
-Defined in: [src/lib/tauri.ts:8](https://github.com/saagpatel/IncidentReview/blob/0e2d0e4b49c7d6af9d6183f418bd05b1e0fe7fe9/src/lib/tauri.ts#L8)
+Defined in: [src/lib/tauri.ts:8](https://github.com/saagpatel/IncidentReview/blob/7dc21b3c9e6aea21725f6b6423572d38b0cfba7d/src/lib/tauri.ts#L8)
