@@ -266,6 +266,8 @@ body {
 .chart__footer {
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .linkBtn {

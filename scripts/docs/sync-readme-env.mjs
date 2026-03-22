@@ -4,6 +4,9 @@ const readmePath = "README.md";
 const envPath = ".env.example";
 const start = "<!-- AUTO-GENERATED:ENV START -->";
 const end = "<!-- AUTO-GENERATED:ENV END -->";
+const descriptions = {
+  INCIDENTREVIEW_OLLAMA_BASE_URL: "Base URL for the local Ollama API. Must remain loopback-only.",
+};
 
 const envVars = fs
   .readFileSync(envPath, "utf8")
@@ -16,7 +19,7 @@ const envVars = fs
 const table = [
   "| Variable | Required | Description |",
   "|---|---|---|",
-  ...envVars.map((name) => `| \`${name}\` | optional | TODO |`),
+  ...envVars.map((name) => `| \`${name}\` | optional | ${descriptions[name] ?? "See .env.example."} |`),
 ].join("\n");
 
 const readme = fs.readFileSync(readmePath, "utf8");

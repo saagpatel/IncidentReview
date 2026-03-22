@@ -157,13 +157,20 @@ impl EvidenceStore {
 
     fn normalize_descriptor_for_id(input: &EvidenceAddSourceInput) -> Result<String, AppError> {
         // Deterministic, minimal descriptor. created_at and label are not included.
-        // origin.path is included when present.
+        // File/directory sources are keyed by kind+path; paste sources also include
+        // the normalized content hash so distinct pasted evidence does not collide.
+        let text_sha256 = if input.origin.kind == "paste" {
+            Some(sha256_hex(normalize_text(input.text.as_deref().unwrap_or("")).as_bytes()))
+        } else {
+            None
+        };
         let v = serde_json::json!({
             "type": &input.source_type,
             "origin": {
                 "kind": &input.origin.kind,
                 "path": &input.origin.path,
             },
+            "text_sha256": text_sha256,
         });
         canonical_json_string(&v)
     }
@@ -189,17 +196,54 @@ impl EvidenceStore {
                 .with_details(format!("kind={}", input.origin.kind)));
             }
         }
-        if (origin_kind == "file" || origin_kind == "directory") && input.origin.path.is_none() {
-            return Err(AppError::new(
-                "AI_EVIDENCE_SOURCE_INVALID",
-                "Evidence origin path is required for file/directory sources",
-            ));
+        if origin_kind == "file" || origin_kind == "directory" {
+            let path = input.origin.path.as_deref().map(str::trim).unwrap_or("");
+            if path.is_empty() {
+                return Err(AppError::new(
+                    "AI_EVIDENCE_SOURCE_INVALID",
+                    "Evidence origin path is required for file/directory sources",
+                ));
+            }
         }
         if origin_kind == "paste" && input.text.as_deref().unwrap_or("").trim().is_empty() {
             return Err(AppError::new(
                 "AI_EVIDENCE_SOURCE_INVALID",
                 "Evidence paste text is required",
             ));
+        }
+        match (&input.source_type, origin_kind) {
+            (EvidenceSourceType::SanitizedExport, "directory")
+            | (EvidenceSourceType::SlackTranscript, "file")
+            | (EvidenceSourceType::IncidentReportMd, "file")
+            | (EvidenceSourceType::FreeformText, "paste") => {}
+            (EvidenceSourceType::SanitizedExport, _) => {
+                return Err(AppError::new(
+                    "AI_EVIDENCE_SOURCE_INVALID",
+                    "Sanitized export sources must use a directory origin",
+                )
+                .with_details(format!("kind={origin_kind}")));
+            }
+            (EvidenceSourceType::SlackTranscript, _) => {
+                return Err(AppError::new(
+                    "AI_EVIDENCE_SOURCE_INVALID",
+                    "Slack transcript sources must use a file origin",
+                )
+                .with_details(format!("kind={origin_kind}")));
+            }
+            (EvidenceSourceType::IncidentReportMd, _) => {
+                return Err(AppError::new(
+                    "AI_EVIDENCE_SOURCE_INVALID",
+                    "Incident report Markdown sources must use a file origin",
+                )
+                .with_details(format!("kind={origin_kind}")));
+            }
+            (EvidenceSourceType::FreeformText, _) => {
+                return Err(AppError::new(
+                    "AI_EVIDENCE_SOURCE_INVALID",
+                    "Freeform text sources must use a paste origin",
+                )
+                .with_details(format!("kind={origin_kind}")));
+            }
         }
 
         let descriptor = Self::normalize_descriptor_for_id(&input)?;

@@ -69,6 +69,7 @@ describe("AiSection", () => {
     expect(screen.getByRole("button", { name: "Search (selected source)" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Build Chunks (selected)" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Draft Section (requires citations)" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Add Evidence" })).toBeDisabled();
     expect(screen.getByText("Add Evidence Source")).toBeInTheDocument();
     expect(screen.getByText("Evidence Viewer")).toBeInTheDocument();
     expect(screen.getByText("Draft Artifacts (History / Provenance)")).toBeInTheDocument();
@@ -77,5 +78,35 @@ describe("AiSection", () => {
     await waitFor(() => {
       expect(onToast).toHaveBeenCalledWith(expect.objectContaining({ kind: "success", title: "AI OK" }));
     });
+  });
+
+  it("keeps add-evidence disabled until the required path or text exists", async () => {
+    mockInvokeValidated.mockImplementation(async (command: string) => {
+      if (command === "ai_health_check") return { ok: true, message: "healthy" };
+      if (command === "ai_models_list") return [{ name: "llama3.2:latest" }];
+      if (command === "ai_evidence_list_sources") return [];
+      if (command === "ai_index_status") {
+        return { ready: false, chunk_count: 0, chunks_total: 0, model: null, dims: null, updated_at: null };
+      }
+      if (command === "ai_drafts_list") return [];
+      throw new Error(`unexpected command: ${command}`);
+    });
+
+    render(<AiSection onToast={vi.fn()} />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/AI_EVIDENCE_EMPTY/)).toBeInTheDocument();
+    });
+
+    const addEvidence = screen.getByRole("button", { name: "Add Evidence" });
+    expect(addEvidence).toBeDisabled();
+
+    fireEvent.change(screen.getByRole("combobox", { name: "Type" }), { target: { value: "freeform_text" } });
+    expect(addEvidence).toBeDisabled();
+
+    fireEvent.change(screen.getByRole("textbox", { name: /Text \(paste\)/ }), {
+      target: { value: "Evidence text for a cited draft." },
+    });
+    expect(addEvidence).toBeEnabled();
   });
 });

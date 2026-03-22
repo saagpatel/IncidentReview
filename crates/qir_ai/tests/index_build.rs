@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::fs;
 
 use qir_ai::embeddings::Embedder;
 use qir_ai::evidence::{AiIndexBuildInput, EvidenceAddSourceInput, EvidenceOrigin, EvidenceSourceType, EvidenceStore, IndexStore};
@@ -6,6 +6,7 @@ use qir_ai::evidence::{AiIndexBuildInput, EvidenceAddSourceInput, EvidenceOrigin
 use qir_core::error::AppError;
 
 use std::sync::atomic::{AtomicUsize, Ordering};
+use tempfile::tempdir;
 
 struct CountingEmbedder {
     calls: AtomicUsize,
@@ -36,27 +37,27 @@ impl Embedder for CountingEmbedder {
 
 #[test]
 fn builds_index_incrementally_and_embeds_only_changed_chunks() {
-    let nanos = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-    let root = PathBuf::from(std::env::temp_dir()).join(format!("incidentreview-ai-index-test-{nanos}"));
+    let dir = tempdir().expect("tempdir");
+    let root = dir.path().join("index-build");
+    fs::create_dir_all(&root).expect("create_root");
     let evidence = EvidenceStore::open(root.clone());
 
     let p1 = "a".repeat(900);
     let p2 = "b".repeat(900);
     let text_v1 = format!("{p1}\n\n{p2}");
+    let source_path = root.join("incident.md");
+    fs::write(&source_path, &text_v1).expect("write_source_v1");
 
     let source = evidence
         .add_source(EvidenceAddSourceInput {
-            source_type: EvidenceSourceType::FreeformText,
+            source_type: EvidenceSourceType::IncidentReportMd,
             origin: EvidenceOrigin {
-                kind: "paste".to_string(),
-                path: None,
+                kind: "file".to_string(),
+                path: Some(source_path.display().to_string()),
             },
             label: "test".to_string(),
             created_at: "2026-02-10T00:00:00Z".to_string(),
-            text: Some(text_v1),
+            text: None,
         })
         .expect("add_source");
     evidence
@@ -102,16 +103,17 @@ fn builds_index_incrementally_and_embeds_only_changed_chunks() {
     // Change only the first paragraph -> only one chunk should require embedding.
     let p1b = format!("{}x", "a".repeat(900));
     let text_v2 = format!("{p1b}\n\n{p2}");
+    fs::write(&source_path, &text_v2).expect("write_source_v2");
     let source2 = evidence
         .add_source(EvidenceAddSourceInput {
-            source_type: EvidenceSourceType::FreeformText,
+            source_type: EvidenceSourceType::IncidentReportMd,
             origin: EvidenceOrigin {
-                kind: "paste".to_string(),
-                path: None,
+                kind: "file".to_string(),
+                path: Some(source_path.display().to_string()),
             },
             label: "test".to_string(),
             created_at: "2026-02-10T00:00:00Z".to_string(),
-            text: Some(text_v2),
+            text: None,
         })
         .expect("add_source_2");
     evidence

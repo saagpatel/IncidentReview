@@ -1,9 +1,8 @@
-use std::path::PathBuf;
-
 use qir_ai::draft::{draft_section_with_llm, AiDraftSectionRequest, SectionId};
 use qir_ai::evidence::{EvidenceAddSourceInput, EvidenceOrigin, EvidenceSourceType, EvidenceStore};
 use qir_ai::llm::Llm;
 use qir_core::error::AppError;
+use tempfile::TempDir;
 
 struct MockLlm {
     out: String,
@@ -15,13 +14,9 @@ impl Llm for MockLlm {
     }
 }
 
-fn setup_one_chunk_store() -> (EvidenceStore, String) {
-    let nanos = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-    let root = PathBuf::from(std::env::temp_dir()).join(format!("incidentreview-ai-draft-test-{nanos}"));
-    let evidence = EvidenceStore::open(root);
+fn setup_one_chunk_store() -> (TempDir, EvidenceStore, String) {
+    let dir = tempfile::tempdir().expect("tempdir");
+    let evidence = EvidenceStore::open(dir.path().to_path_buf());
     let source = evidence
         .add_source(EvidenceAddSourceInput {
             source_type: EvidenceSourceType::FreeformText,
@@ -44,12 +39,12 @@ fn setup_one_chunk_store() -> (EvidenceStore, String) {
         })
         .expect("list_chunks");
     assert_eq!(chunks.len(), 1);
-    (evidence, chunks[0].chunk_id.clone())
+    (dir, evidence, chunks[0].chunk_id.clone())
 }
 
 #[test]
 fn draft_requires_citations() {
-    let (evidence, chunk_id) = setup_one_chunk_store();
+    let (_dir, evidence, chunk_id) = setup_one_chunk_store();
     let llm = MockLlm {
         out: format!("Hello [[chunk:{chunk_id}]]"),
     };
@@ -70,7 +65,7 @@ fn draft_requires_citations() {
 
 #[test]
 fn draft_rejects_unknown_chunk_id() {
-    let (evidence, _chunk_id) = setup_one_chunk_store();
+    let (_dir, evidence, _chunk_id) = setup_one_chunk_store();
     let llm = MockLlm {
         out: "Hello [[chunk:doesnotmatter]]".to_string(),
     };
@@ -91,7 +86,7 @@ fn draft_rejects_unknown_chunk_id() {
 
 #[test]
 fn draft_fails_when_model_output_has_no_citations() {
-    let (evidence, chunk_id) = setup_one_chunk_store();
+    let (_dir, evidence, chunk_id) = setup_one_chunk_store();
     let llm = MockLlm {
         out: "Hello with no citations".to_string(),
     };
@@ -112,7 +107,7 @@ fn draft_fails_when_model_output_has_no_citations() {
 
 #[test]
 fn draft_fails_when_model_cites_unapproved_chunk_id() {
-    let (evidence, chunk_id) = setup_one_chunk_store();
+    let (_dir, evidence, chunk_id) = setup_one_chunk_store();
     let llm = MockLlm {
         out: "Hello [[chunk:other]]".to_string(),
     };
@@ -133,7 +128,7 @@ fn draft_fails_when_model_cites_unapproved_chunk_id() {
 
 #[test]
 fn draft_succeeds_with_valid_citation_marker() {
-    let (evidence, chunk_id) = setup_one_chunk_store();
+    let (_dir, evidence, chunk_id) = setup_one_chunk_store();
     let llm = MockLlm {
         out: format!("Executive summary [[chunk:{chunk_id}]]"),
     };
@@ -156,7 +151,7 @@ fn draft_succeeds_with_valid_citation_marker() {
 
 #[test]
 fn highlights_require_citation_per_bullet() {
-    let (evidence, chunk_id) = setup_one_chunk_store();
+    let (_dir, evidence, chunk_id) = setup_one_chunk_store();
     let llm = MockLlm {
         out: format!("- One highlight [[chunk:{chunk_id}]]\n- Second highlight without citation"),
     };
@@ -177,7 +172,7 @@ fn highlights_require_citation_per_bullet() {
 
 #[test]
 fn narrative_requires_citation_per_paragraph() {
-    let (evidence, chunk_id) = setup_one_chunk_store();
+    let (_dir, evidence, chunk_id) = setup_one_chunk_store();
     let llm = MockLlm {
         out: format!("First paragraph [[chunk:{chunk_id}]]\n\nSecond paragraph without citation"),
     };
@@ -198,7 +193,7 @@ fn narrative_requires_citation_per_paragraph() {
 
 #[test]
 fn themes_succeed_when_each_bullet_is_cited() {
-    let (evidence, chunk_id) = setup_one_chunk_store();
+    let (_dir, evidence, chunk_id) = setup_one_chunk_store();
     let llm = MockLlm {
         out: format!("- Theme A [[chunk:{chunk_id}]]"),
     };

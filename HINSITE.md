@@ -2740,7 +2740,7 @@ Note: `pnpm approve-builds` was needed once to allow `esbuild` install scripts (
 3) Verification: commands run + results
 - `pnpm test` (source: `/Users/d/Projects/IncidentReview/package.json`) -> OK
 - `bash ./.codex/scripts/run_verify_commands.sh` (source: `/Users/d/Projects/IncidentReview/.codex/scripts/run_verify_commands.sh`) -> OK
-- `gh api repos/saagar210/IncidentReview/branches/main/protection/required_status_checks` (source: GitHub REST API via `gh`) -> confirms `quality` required with strict mode.
+- `gh api repos/saagpatel/IncidentReview/branches/main/protection/required_status_checks` (source: GitHub REST API via `gh`) -> confirms `quality` required with strict mode.
 
 4) Risks / follow-ups
 - Coverage remains below high global thresholds due legacy untested surfaces; diff coverage remains the primary enforcement guard.
@@ -2754,3 +2754,100 @@ Note: `pnpm approve-builds` was needed once to allow `esbuild` install scripts (
 6) Next steps
 - Optional: ratchet global coverage thresholds incrementally once legacy modules gain tests.
 - Optional: wire reviewer/fixer launcher command aliases if you want one-command execution of the QA critic loop.
+
+---
+
+## 2026-03-14 - Local readiness pass (launch recovery, smoke walkthrough, docs truth-alignment)
+
+1) Done: what changed + why
+- Recovered local launch on this machine by moving the Vite/Tauri dev ports from `1420/1421` to `1430/1431` after confirming `1420` was already occupied by another local project.
+- Fixed the first concrete UI defect found during smoke testing: the dashboard footer actions now render as a grouped control with spacing instead of visually running together.
+- Tightened the dashboard test to cover the grouped filter controls so the UI fix has a stable regression check.
+- Aligned repo docs to the app we actually verified: removed overstated README claims, replaced the environment variable placeholder text with a real description, and regenerated reference docs so `docs:check` is green again.
+- Completed a real local launch/build/readiness pass: installed dependencies, launched the Tauri app, built a local bundle, exercised the core seeded-dashboard/report/validation flows in the desktop UI, and re-ran the canonical verification suite.
+
+2) Files changed
+- `/Users/d/Projects/IncidentReview/vite.config.ts`
+- `/Users/d/Projects/IncidentReview/src-tauri/tauri.conf.json`
+- `/Users/d/Projects/IncidentReview/src/styles.css`
+- `/Users/d/Projects/IncidentReview/src/features/dashboards/DashboardsSection.tsx`
+- `/Users/d/Projects/IncidentReview/src/features/dashboards/DashboardsSection.test.tsx`
+- `/Users/d/Projects/IncidentReview/README.md`
+- `/Users/d/Projects/IncidentReview/.env.example`
+- `/Users/d/Projects/IncidentReview/scripts/docs/sync-readme-env.mjs`
+- `/Users/d/Projects/IncidentReview/docs/reference/**/*` (regenerated)
+- `/Users/d/Projects/IncidentReview/pnpm-lock.yaml`
+- `/Users/d/Projects/IncidentReview/HINSITE.md`
+
+3) Verification: commands run + results
+- `pnpm install` (source: `/Users/d/Projects/IncidentReview/README.md`) -> OK
+- `pnpm tauri -V` (source: `/Users/d/Projects/IncidentReview/package.json`) -> OK (`tauri-cli 2.10.0`)
+- `pnpm tauri dev` (source: `/Users/d/Projects/IncidentReview/package.json`) -> OK after port move to `1430`
+- Manual desktop smoke walkthrough (source: running local app) -> OK for app launch, demo seed, dashboard load, incident drill-down, report generation, validation refresh, and AI preflight/model detection
+- `pnpm tauri build --ci` (source: `/Users/d/Projects/IncidentReview/package.json`) -> OK
+- `pnpm ui:gate:static` (source: `/Users/d/Projects/IncidentReview/package.json`) -> OK
+- `pnpm ui:gate:regression` (source: `/Users/d/Projects/IncidentReview/package.json`) -> OK
+- `bash ./.codex/scripts/run_verify_commands.sh` (source: `/Users/d/Projects/IncidentReview/.codex/scripts/run_verify_commands.sh`) -> OK
+
+4) Risks / follow-ups
+- The local app is now launchable and verification-clean, but the current git worktree still contains pre-existing non-readiness changes outside this pass (`AGENTS.md` modified, `tests/perf/` untracked). Keep those separate from release judgment.
+- The AI layer is well-covered by repo tests and the desktop UI preflight is healthy, but I did not fully drive the end-to-end AI evidence-add/index/draft happy path through desktop accessibility automation in this pass.
+- `src-tauri/src/lib.rs` still emits one non-blocking Rust warning for an unused `ai_evidence_list_chunks_paginated` function during dev/build.
+
+5) Status: current phase + complete / in progress / blocked
+- Local RC readiness pass: complete.
+- Canonical verification gate: complete and green.
+- Residual scope cleanup: small follow-up only (AI desktop happy-path smoke depth + non-blocking warning cleanup if desired).
+
+6) Next steps
+- If you want true “demo with everything live” confidence, run one focused manual AI happy-path pass in the desktop app: add a freeform evidence source, build chunks, build the index, search, and generate a cited draft.
+- Optionally remove or wire `ai_evidence_list_chunks_paginated` in `/Users/d/Projects/IncidentReview/src-tauri/src/lib.rs` to clear the remaining build warning.
+- Keep the pre-existing `AGENTS.md` and `tests/perf/` changes out of any readiness/release commit unless they are intentionally part of the release scope.
+
+---
+
+## 2026-03-14 - AI readiness hardening (desktop-source validation, source-ID fix, flaky test stabilization)
+
+1) Done: what changed + why
+- Removed the stale unused Tauri AI command so desktop builds stop carrying the extra dead-code warning in the current readiness path.
+- Fixed a real AI evidence bug: pasted evidence sources no longer collapse onto the same `source_id`. The store now includes normalized paste-content hashing in the deterministic descriptor, which keeps selected-source search/index behavior trustworthy for multiple pasted sources.
+- Hardened the AI add-evidence UX so the desktop UI disables submission until the required path/text is present, matching the backend validation and preventing the invalid empty-path evidence state we found during smoke work.
+- Added repeatable AI regression coverage for the end-to-end backend path: source -> chunks -> index -> selected-source query -> cited draft -> stored draft artifact.
+- Stabilized the `qir_ai` test suite by moving temp-root creation to `tempfile`-backed directories where needed, eliminating timing-based collisions that were making the canonical wrapper flaky.
+- Re-ran the full readiness verification stack and confirmed the repo gate, UI gates, and packaged macOS build are green again.
+
+2) Files changed
+- `/Users/d/Projects/IncidentReview/crates/qir_ai/src/evidence/store.rs`
+- `/Users/d/Projects/IncidentReview/crates/qir_ai/src/lib.rs`
+- `/Users/d/Projects/IncidentReview/crates/qir_ai/tests/draft.rs`
+- `/Users/d/Projects/IncidentReview/crates/qir_ai/tests/full_flow.rs`
+- `/Users/d/Projects/IncidentReview/crates/qir_ai/tests/index_build.rs`
+- `/Users/d/Projects/IncidentReview/crates/qir_ai/tests/retrieval.rs`
+- `/Users/d/Projects/IncidentReview/src-tauri/src/lib.rs`
+- `/Users/d/Projects/IncidentReview/src/features/ai/AiSection.tsx`
+- `/Users/d/Projects/IncidentReview/src/features/ai/AiSection.test.tsx`
+- `/Users/d/Projects/IncidentReview/docs/reference/**/*` (regenerated)
+- `/Users/d/Projects/IncidentReview/HINSITE.md`
+
+3) Verification: commands run + results
+- Manual packaged-app AI inspection (source: running `/Users/d/Projects/IncidentReview/target/release/bundle/macos/IncidentReview.app`) -> OK for desktop AI preflight, source refresh, chunk build, index build, and real index status persistence
+- `cargo test -p qir_ai --all-features` (source: `/Users/d/Projects/IncidentReview/.codex/verify.commands`) -> OK
+- `bash ./.codex/scripts/run_verify_commands.sh` (source: `/Users/d/Projects/IncidentReview/.codex/scripts/run_verify_commands.sh`) -> OK
+- `pnpm ui:gate:static` (source: `/Users/d/Projects/IncidentReview/package.json`) -> OK
+- `pnpm ui:gate:regression` (source: `/Users/d/Projects/IncidentReview/package.json`) -> OK
+- `pnpm tauri build --ci` (source: `/Users/d/Projects/IncidentReview/package.json`) -> OK
+
+4) Risks / follow-ups
+- The packaged desktop AI flow is now strongly verified across setup, indexing, backend drafting, and local artifact persistence, but the literal final desktop text-entry/click path for search -> citation -> draft remains partially limited by macOS accessibility automation reliability on this machine.
+- Production build remains successful; the remaining notable build signal is the existing Vite large-chunk warning, which is non-blocking for local RC but worth revisiting before a broader release push.
+- Pre-existing unrelated worktree noise remains outside this pass (`AGENTS.md` modified, `tests/perf/` untracked).
+
+5) Status: current phase + complete / in progress / blocked
+- AI included readiness hardening: complete.
+- Canonical verification + UI gates + packaged local build: complete and green.
+- Remaining follow-up: optional manual desktop AI happy-path demo pass only.
+
+6) Next steps
+- Optional: run one hand-driven desktop AI demo to replace the remaining accessibility-automation caveat with human-confirmed search/citation/draft evidence.
+- Optional: address the Vite large-chunk warning with code-splitting before broader release packaging.
+- Keep the pre-existing unrelated git changes out of any readiness commit unless they are intentionally in scope.

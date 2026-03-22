@@ -184,6 +184,11 @@ export function AiSection(props: { onToast: (t: { kind: "success" | "error"; tit
   const originKind = useMemo(() => defaultOriginKindForType(addType), [addType]);
   const sourceById = useMemo(() => new Map(sources.map((s) => [s.source_id, s] as const)), [sources]);
   const chunkSummaryById = useMemo(() => new Map(chunks.map((c) => [c.chunk_id, c] as const)), [chunks]);
+  const canAddSource = useMemo(() => {
+    if (addLabel.trim().length === 0) return false;
+    if (originKind === "paste") return addText.trim().length > 0;
+    return addPath.trim().length > 0;
+  }, [addLabel, addPath, addText, originKind]);
 
   function dedupePreserveOrder(ids: string[]): string[] {
     const seen = new Set<string>();
@@ -659,13 +664,18 @@ export function AiSection(props: { onToast: (t: { kind: "success" | "error"; tit
         )}
 
         <div className="actions">
-          <button className="btn btn--accent" type="button" onClick={onAddSource}>
+          <button className="btn btn--accent" type="button" onClick={onAddSource} disabled={!canAddSource}>
             Add Evidence
           </button>
           <button className="btn" type="button" onClick={refreshSources}>
             Refresh Sources
           </button>
         </div>
+        {!canAddSource ? (
+          <p className="hint">
+            Add evidence is disabled until you provide a label and a valid {originKind === "paste" ? "text payload" : `${originKind} path`}.
+          </p>
+        ) : null}
       </div>
 
       <div className="card card--sub">

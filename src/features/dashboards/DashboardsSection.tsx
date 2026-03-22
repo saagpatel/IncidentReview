@@ -283,7 +283,7 @@ export function DashboardsSection(props: {
                       },
                     }}
                   />
-                  <div className="chart__footer">
+                  <div className="chart__footer" role="group" aria-label="Dashboard filters">
                     <button className="linkBtn" type="button" onClick={() => props.setSelectedSeverity(null)}>
                       Clear filter
                     </button>
@@ -544,4 +544,3 @@ export function DashboardsSection(props: {
     </>
   );
 }
-

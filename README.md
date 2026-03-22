@@ -1,6 +1,6 @@
 # IncidentReview
 
-Local-first macOS desktop app for Quarterly Incident Reviews (QIR): ingest Jira + Slack + docs exports, compute deterministic metrics (MTTD/MTTA/MTTR and more), render storytelling dashboards (ECharts), and generate an executive-ready QIR packet. Optional local AI via Ollama (localhost only) for evidence-backed drafting and theme synthesis.
+Local-first macOS desktop app for Quarterly Incident Reviews (QIR): ingest Jira CSVs and Slack transcripts, compute deterministic metrics (MTTD/MTTA/MTTR and more), render storytelling dashboards (ECharts), and generate an executive-ready QIR report. Optional local AI via Ollama (localhost only) adds evidence-backed drafting and theme synthesis.
 
 ## Why this exists
 
@@ -26,7 +26,7 @@ Quarterly reviews are one of the few recurring moments where incident programs c
 ### Ingest
 - Jira incident export ingestion (CSV, mapping UI with saved mappings)
 - Slack transcript ingestion (file or paste), timeline extraction into structured events
-- Optional artifact attachments (docs notes, files) with SHA-256 hashing and dedupe
+- Demo seed, sanitized export/import, and backup/restore flows for local review work
 - Validation report for missing/contradictory timestamps and out-of-range values
 
 ### Deterministic metrics
@@ -47,19 +47,17 @@ Storytelling dashboards with drill-down:
 - Quarter at a glance (KPIs + deltas)
 - Detection story (source mix, awareness lag)
 - Response story (mitigation vs resolution, distributions)
-- Vendor/service reliability (heatmaps, recurrence)
-- Communications story (time to first comms, cadence, SLA adherence)
-- Action effectiveness (completion rate, aging, categories)
+- Vendor/service reliability (counts and weighted pain drill-downs)
+- Incident drill-down with computed metrics, validation warnings, timeline events, and stored artifacts
 
 ### QIR packet
 - One-click generation of a QIR report (Markdown)
-- Optional PDF export (added only if it doesn’t introduce toolchain fragility)
 - Stable ordering for snapshot testing and reproducibility
 
 ### Local AI (optional, Ollama)
-- Incident narrative drafts (what/impact/mitigation/learned), with citations
-- Theme naming and description (themes derived from embeddings-first clustering)
-- Draft next-quarter action plan (People/Process/Tech/Vendor/Monitoring/Docs), with evidence links
+- Evidence source registration, chunking, indexing, search, and context inspection
+- Draft executive summary, incident highlights, theme analysis, quarter recap, and next-quarter action plan, all with citations
+- Draft artifacts persisted locally in the workspace for review/audit
 
 > AI is additive. The app remains fully usable without Ollama.
 
@@ -94,11 +92,11 @@ Storytelling dashboards with drill-down:
 - `src`: frontend UI + ECharts chart builders; no metric computation
 
 ### Data flow
-1. **Ingest** (CSV/transcripts/notes) → normalize into canonical schema
+1. **Ingest** (CSV/transcripts/sanitized evidence) → normalize into canonical schema
 2. **Validate** (ordering, missing fields, anomalies)
 3. **Compute** deterministic metrics and cached rollups
 4. **Render** dashboards from analytics payloads
-5. **Generate** QIR report (Markdown; optional PDF)
+5. **Generate** QIR report (Markdown)
 6. **Optional AI**: build evidence index, draft narratives/themes/actions with citations
 
 ---
@@ -228,12 +226,12 @@ The app must provide:
 
 ## License
 
-TBD.
+No license has been granted yet. Until a license file is added, treat this repository as all rights reserved.
 
 ## Environment Variables
 
 <!-- AUTO-GENERATED:ENV START -->
 | Variable | Required | Description |
 |---|---|---|
-| `INCIDENTREVIEW_OLLAMA_BASE_URL` | optional | TODO |
+| `INCIDENTREVIEW_OLLAMA_BASE_URL` | optional | Base URL for the local Ollama API. Must remain loopback-only. |
 <!-- AUTO-GENERATED:ENV END -->

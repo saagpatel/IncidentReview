@@ -78,6 +78,12 @@ describe("DashboardsSection", () => {
 
     expect(screen.getByText("Incident Count")).toBeInTheDocument();
     expect(screen.getByText("Database saturation")).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "Dashboard filters" })).toContainElement(
+      screen.getByRole("button", { name: "Clear filter" })
+    );
+    expect(screen.getByRole("group", { name: "Dashboard filters" })).toContainElement(
+      screen.getByRole("button", { name: "Clear incident filter" })
+    );
 
     fireEvent.click(screen.getByRole("button", { name: "Database saturation" }));
     expect(onOpenIncidentDetail).toHaveBeenCalledWith(101);

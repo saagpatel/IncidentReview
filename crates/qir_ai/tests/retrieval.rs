@@ -1,11 +1,10 @@
-use std::path::PathBuf;
-
 use qir_ai::embeddings::Embedder;
 use qir_ai::evidence::{
     AiIndexBuildInput, EvidenceAddSourceInput, EvidenceOrigin, EvidenceSourceType, EvidenceStore, IndexStore,
 };
 use qir_ai::retrieve::query_with_embedder;
 use qir_core::error::AppError;
+use tempfile::tempdir;
 
 struct CountABEmbedder;
 
@@ -26,11 +25,8 @@ impl Embedder for CountABEmbedder {
 
 #[test]
 fn retrieval_returns_stable_topk_and_tie_breaks_by_chunk_id() {
-    let nanos = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-    let root = PathBuf::from(std::env::temp_dir()).join(format!("incidentreview-ai-retrieval-test-{nanos}"));
+    let dir = tempdir().expect("tempdir");
+    let root = dir.path().to_path_buf();
     let evidence = EvidenceStore::open(root.clone());
 
     let para_a = "a".repeat(1000);

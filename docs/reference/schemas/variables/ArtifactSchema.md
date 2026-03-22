@@ -8,4 +8,4 @@
 
 > `const` **ArtifactSchema**: `ZodObject`\<\{ `created_at`: `ZodString`; `filename`: `ZodNullable`\<`ZodString`\>; `id`: `ZodNumber`; `incident_id`: `ZodNullable`\<`ZodNumber`\>; `kind`: `ZodString`; `mime_type`: `ZodNullable`\<`ZodString`\>; `sha256`: `ZodString`; `text`: `ZodNullable`\<`ZodString`\>; \}, `$strip`\>
 
-Defined in: [src/lib/schemas.ts:468](https://github.com/saagar210/IncidentReview/blob/fa4457f78085812c15cd94931e9603044d270a42/src/lib/schemas.ts#L468)
+Defined in: [src/lib/schemas.ts:468](https://github.com/saagpatel/IncidentReview/blob/0e2d0e4b49c7d6af9d6183f418bd05b1e0fe7fe9/src/lib/schemas.ts#L468)
