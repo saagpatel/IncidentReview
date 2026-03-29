@@ -12,7 +12,7 @@ jobs:
     name: codex_verify
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install Linux desktop dependencies
         run: |
           sudo apt-get update
@@ -60,7 +60,7 @@ jobs:
     name: codex_secrets
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: TruffleHog secret scan
@@ -72,7 +72,7 @@ jobs:
     name: codex_sast
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Semgrep
         uses: returntocorp/semgrep-action@v1
         with:
@@ -82,7 +82,7 @@ jobs:
     name: codex_dependency_and_misconfig
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Trivy FS scan
         uses: aquasecurity/trivy-action@v0.35.0
         with:
@@ -103,6 +103,6 @@ jobs:
       actions: read
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: OpenSSF Scorecard
         uses: ossf/scorecard-action@v2.3.1
