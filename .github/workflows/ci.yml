@@ -14,7 +14,7 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 10.29.2
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'pnpm'
@@ -28,7 +28,7 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 10.29.2
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'pnpm'
@@ -51,7 +51,7 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 10.29.2
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'pnpm'
@@ -70,7 +70,7 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 10.29.2
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: "20"
           cache: "pnpm"
