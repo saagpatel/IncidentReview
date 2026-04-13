@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2026-03-21
 
 ### Added
+
 - Initial repository baseline
 - Backup/restore and sanitized dataset export
 - Sanitized dataset import with round-trip tests
@@ -36,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tests and living docs enforcement
 
 ### Fixed
+
 - CI: harden IncidentReview workflows
 - CI: emit quality check from main CI workflow
 - CI: remove blocked third-party actions from quality gates
@@ -49,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - UI: stabilize mobile snapshot tolerance
 
 ### Changed
+
 - Prepared public rollout baseline
 - Added AI boundary ADR
 - Refreshed generated references

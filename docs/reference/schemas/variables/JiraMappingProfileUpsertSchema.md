@@ -1,6 +1,6 @@
 [**incidentreview**](../../README.md)
 
-***
+---
 
 [incidentreview](../../README.md) / [schemas](../README.md) / JiraMappingProfileUpsertSchema
 
@@ -8,4 +8,4 @@
 
 > `const` **JiraMappingProfileUpsertSchema**: `ZodObject`\<\{ `id`: `ZodOptional`\<`ZodNullable`\<`ZodNumber`\>\>; `mapping`: `ZodObject`\<\{ `ack_ts`: `ZodOptional`\<`ZodNullable`\<`ZodString`\>\>; `description`: `ZodOptional`\<`ZodNullable`\<`ZodString`\>\>; `detection_source`: `ZodOptional`\<`ZodNullable`\<`ZodString`\>\>; `external_id`: `ZodOptional`\<`ZodNullable`\<`ZodString`\>\>; `first_observed_ts`: `ZodOptional`\<`ZodNullable`\<`ZodString`\>\>; `impact_pct`: `ZodOptional`\<`ZodNullable`\<`ZodString`\>\>; `it_awareness_ts`: `ZodOptional`\<`ZodNullable`\<`ZodString`\>\>; `mitigate_ts`: `ZodOptional`\<`ZodNullable`\<`ZodString`\>\>; `resolve_ts`: `ZodOptional`\<`ZodNullable`\<`ZodString`\>\>; `service`: `ZodOptional`\<`ZodNullable`\<`ZodString`\>\>; `service_health_pct`: `ZodOptional`\<`ZodNullable`\<`ZodString`\>\>; `severity`: `ZodOptional`\<`ZodNullable`\<`ZodString`\>\>; `start_ts`: `ZodOptional`\<`ZodNullable`\<`ZodString`\>\>; `title`: `ZodString`; `vendor`: `ZodOptional`\<`ZodNullable`\<`ZodString`\>\>; \}, `$strip`\>; `name`: `ZodString`; \}, `$strip`\>
 
-Defined in: [src/lib/schemas.ts:42](https://github.com/saagpatel/IncidentReview/blob/62f6666f7da35ca351b9e7e8e3767b0ccadae45b/src/lib/schemas.ts#L42)
+Defined in: [src/lib/schemas.ts:42](https://github.com/saagpatel/IncidentReview/blob/f25f9d5c298ccce37f24ee3e5d5eadc4b8ed435f/src/lib/schemas.ts#L42)

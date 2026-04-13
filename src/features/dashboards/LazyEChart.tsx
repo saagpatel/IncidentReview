@@ -1,7 +1,7 @@
 import { lazy, Suspense, type ComponentProps } from "react";
 
 // Lazy load ECharts component to reduce initial bundle
-const ReactEChartsLazy = lazy(() => import("echarts-for-react"));
+const ReactEChartsLazy = lazy(() => import("./EChartRenderer"));
 
 /**
  * Lazy-loaded wrapper for ECharts-for-React

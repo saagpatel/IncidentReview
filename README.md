@@ -9,23 +9,27 @@ IncidentReview is a local-first macOS desktop app for engineering teams running 
 ## Features
 
 ### Data Ingest
+
 - Jira incident CSV import with a mapping UI and saved column mappings
 - Slack transcript ingestion (file or paste) with structured timeline extraction
 - Demo seed, sanitized export/import, and backup/restore for portability
 - Validation report for missing timestamps and out-of-range values
 
 ### Deterministic Metrics
+
 - Per-incident: MTTD, IT awareness lag, MTTA, time to mitigation, MTTR
 - Quarter rollups: volume, severity/impact distributions, repeat offenders by vendor/service
 - Weighted "pain" scores (impact × degradation × duration) with configurable weights
 
 ### Storytelling Dashboards
+
 - Quarter at a glance with KPI deltas
 - Timeline and trend views (ECharts, drill-down enabled)
 - Severity and impact distributions, vendor heat maps
 - Repeat offender analysis
 
 ### AI Drafting (Optional)
+
 - Ollama local AI only — no external calls, `127.0.0.1` only
 - Evidence-first: AI must cite evidence chunks or mark UNKNOWN
 - Executive summary, theme synthesis, and recommendations
@@ -56,14 +60,14 @@ npm run tauri dev
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Desktop shell | Tauri 2 |
-| Frontend | React, TypeScript, Tailwind CSS |
-| Charts | ECharts |
+| Layer          | Technology                                 |
+| -------------- | ------------------------------------------ |
+| Desktop shell  | Tauri 2                                    |
+| Frontend       | React, TypeScript, Tailwind CSS            |
+| Charts         | ECharts                                    |
 | Metrics engine | Rust — deterministic, audited calculations |
-| AI narrative | Ollama (localhost only, optional) |
-| Storage | SQLite (local app data dir) |
+| AI narrative   | Ollama (localhost only, optional)          |
+| Storage        | SQLite (local app data dir)                |
 
 ## Architecture
 
