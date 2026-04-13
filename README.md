@@ -1,237 +1,78 @@
 # IncidentReview
 
-Local-first macOS desktop app for Quarterly Incident Reviews (QIR): ingest Jira CSVs and Slack transcripts, compute deterministic metrics (MTTD/MTTA/MTTR and more), render storytelling dashboards (ECharts), and generate an executive-ready QIR report. Optional local AI via Ollama (localhost only) adds evidence-backed drafting and theme synthesis.
+[![Rust](https://img.shields.io/badge/Rust-dea584?style=flat-square&logo=rust)](#) [![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?style=flat-square&logo=typescript)](#) [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](#)
 
-## Why this exists
+> Quarterly reviews shouldn't take a week to assemble. Ingest your Jira exports and Slack transcripts, get deterministic metrics and storytelling dashboards in minutes.
 
-Quarterly reviews are one of the few recurring moments where incident programs can:
-- turn timelines into trends,
-- convert data into decisions,
-- and demonstrate operational maturity.
-
-**IncidentReview** reduces the time spent assembling QIR materials and increases the quality and consistency of the outputs, without sending internal data to third parties.
-
-## Core principles
-
-- **Local-first**: no cloud services required.
-- **Deterministic truth layer**: all metrics are computed via audited logic (no AI arithmetic).
-- **Evidence-first AI**: AI may draft summaries and recommendations, but must cite evidence chunks or explicitly mark UNKNOWN.
-- **Offline by default**: the app runs without network access. Optional local AI uses **only** `127.0.0.1` (Ollama).
-- **Portable**: designed to move between personal and work machines without changing the workflow.
-
----
+IncidentReview is a local-first macOS desktop app for engineering teams running Quarterly Incident Reviews. Import Jira incident CSVs and Slack transcripts, compute MTTD/MTTA/MTTR and severity distributions with audited deterministic logic, and render ECharts dashboards ready for executive presentation — without sending internal incident data to any third party. Optional local AI via Ollama adds evidence-backed narrative drafting.
 
 ## Features
 
-### Ingest
-- Jira incident export ingestion (CSV, mapping UI with saved mappings)
-- Slack transcript ingestion (file or paste), timeline extraction into structured events
-- Demo seed, sanitized export/import, and backup/restore flows for local review work
-- Validation report for missing/contradictory timestamps and out-of-range values
+### Data Ingest
 
-### Deterministic metrics
-Per incident:
-- MTTD (start → first observed)
-- IT awareness lag (first observed → IT awareness)
-- MTTA (awareness → ack)
-- Time to mitigation (ack → mitigate)
-- MTTR / time to resolve (start/observed → resolve)
+- Jira incident CSV import with a mapping UI and saved column mappings
+- Slack transcript ingestion (file or paste) with structured timeline extraction
+- Demo seed, sanitized export/import, and backup/restore for portability
+- Validation report for missing timestamps and out-of-range values
 
-Quarter rollups:
-- incident volume and severity/impact distributions
-- repeat offenders by vendor/service
-- weighted “pain” scores (impact × degradation × duration) with configurable weights
+### Deterministic Metrics
 
-### Dashboards (ECharts)
-Storytelling dashboards with drill-down:
-- Quarter at a glance (KPIs + deltas)
-- Detection story (source mix, awareness lag)
-- Response story (mitigation vs resolution, distributions)
-- Vendor/service reliability (counts and weighted pain drill-downs)
-- Incident drill-down with computed metrics, validation warnings, timeline events, and stored artifacts
+- Per-incident: MTTD, IT awareness lag, MTTA, time to mitigation, MTTR
+- Quarter rollups: volume, severity/impact distributions, repeat offenders by vendor/service
+- Weighted "pain" scores (impact × degradation × duration) with configurable weights
 
-### QIR packet
-- One-click generation of a QIR report (Markdown)
-- Stable ordering for snapshot testing and reproducibility
+### Storytelling Dashboards
 
-### Local AI (optional, Ollama)
-- Evidence source registration, chunking, indexing, search, and context inspection
-- Draft executive summary, incident highlights, theme analysis, quarter recap, and next-quarter action plan, all with citations
-- Draft artifacts persisted locally in the workspace for review/audit
+- Quarter at a glance with KPI deltas
+- Timeline and trend views (ECharts, drill-down enabled)
+- Severity and impact distributions, vendor heat maps
+- Repeat offender analysis
 
-> AI is additive. The app remains fully usable without Ollama.
+### AI Drafting (Optional)
 
----
+- Ollama local AI only — no external calls, `127.0.0.1` only
+- Evidence-first: AI must cite evidence chunks or mark UNKNOWN
+- Executive summary, theme synthesis, and recommendations
 
-## Non-goals (initially)
-
-- Live Jira/Slack API integrations (export-based ingestion first)
-- Slide deck export (PPTX/Google Slides)
-- Fine-tuning models (not required for strong results)
-- Multi-tenant shared database or cloud sync
-
----
-
-## Tech stack
-
-- **Tauri** (desktop shell)
-- **Rust** (core engine: ingest, normalize, validate, metrics, analytics, report)
-- **React + TypeScript** (UI)
-- **SQLite** (storage)
-- **ECharts** (dashboard rendering)
-- **Ollama** (optional local LLM + embeddings via localhost HTTP)
-
----
-
-## Architecture overview
-
-### Module boundaries
-- `crates/qir_core`: domain model, storage, ingest/parsers, validators, metrics, analytics datasets, report generation
-- `crates/qir_ai`: Ollama client, chunking/embeddings, evidence store, prompt templates, guardrails (citation enforcement)
-- `src-tauri`: thin command layer (RPC), error mapping, state wiring (DB pool, caches)
-- `src`: frontend UI + ECharts chart builders; no metric computation
-
-### Data flow
-1. **Ingest** (CSV/transcripts/sanitized evidence) → normalize into canonical schema
-2. **Validate** (ordering, missing fields, anomalies)
-3. **Compute** deterministic metrics and cached rollups
-4. **Render** dashboards from analytics payloads
-5. **Generate** QIR report (Markdown)
-6. **Optional AI**: build evidence index, draft narratives/themes/actions with citations
-
----
-
-## Data location and privacy
-
-All data is stored locally. Default path on macOS:
-
-- SQLite DB: `~/Library/Application Support/IncidentReview/incidentreview.sqlite`
-- Artifact store (if copy-into-store enabled): `~/Library/Application Support/IncidentReview/artifacts/`
-
-The repository must never contain real incident data. Use the sanitized fixtures and demo dataset generator for screenshots and public sharing.
-
----
-
-## Repository structure
-
-```
-IncidentReview/
-  AGENTS.md
-  README.md
-
-  src/                # Frontend (React/TS)
-  src-tauri/          # Tauri shell + commands (thin)
-  crates/
-    qir_core/         # deterministic engine
-    qir_ai/           # Ollama + evidence + guardrails
-  migrations/         # SQL migrations
-  fixtures/           # sanitized demo + golden datasets
-  scripts/            # helper scripts (optional)
-```
-
----
-
-## Development setup (macOS)
+## Quick Start
 
 ### Prerequisites
-- Node.js (LTS recommended)
-- pnpm
-- Rust toolchain (stable)
-- Tauri prerequisites for macOS builds
 
-> Keep installs explicit: do not auto-install tooling in scripts without developer approval.
+- Node.js 18+
+- Rust stable toolchain (`rustup`)
+- Tauri system dependencies: [tauri.app/start/prerequisites](https://tauri.app/start/prerequisites/)
+- Ollama (optional, for AI narrative)
 
-### Install dependencies
+### Installation
+
 ```bash
-pnpm install
+git clone https://github.com/saagpatel/IncidentReview
+cd IncidentReview
+npm install
 ```
 
-### Run in dev mode
+### Usage
+
 ```bash
-pnpm tauri dev
+# Start in development mode
+npm run tauri dev
 ```
 
-### Run in lean dev mode (auto-clean heavy build cache on exit)
-```bash
-pnpm dev:lean
-```
+## Tech Stack
 
-### Run tests
-```bash
-pnpm test
-pnpm lint
-cargo test -p qir_core
-cargo test -p qir_ai
-```
+| Layer          | Technology                                 |
+| -------------- | ------------------------------------------ |
+| Desktop shell  | Tauri 2                                    |
+| Frontend       | React, TypeScript, Tailwind CSS            |
+| Charts         | ECharts                                    |
+| Metrics engine | Rust — deterministic, audited calculations |
+| AI narrative   | Ollama (localhost only, optional)          |
+| Storage        | SQLite (local app data dir)                |
 
-### Build
-```bash
-pnpm tauri build
-```
+## Architecture
 
-### Clean local build/cache artifacts
-```bash
-pnpm clean:local
-```
-
-### Clean only heavy Rust/Tauri build artifacts
-```bash
-pnpm clean:build
-```
-
-### Aggressive repository cleanup (local caches + Git object store)
-```bash
-pnpm clean:repo
-```
-
----
-
-## Local AI via Ollama (optional)
-
-1. Install and run Ollama.
-2. Pull a model of your choice (example only; pick based on local policy/perf):
-   - a smaller fast model for drafts
-   - a larger model for higher-quality summaries
-
-IncidentReview will only call:
-- `http://127.0.0.1:<ollama_port>/...`
-
-Security note: do not configure Ollama to listen on non-loopback interfaces (for example `0.0.0.0`) and do not expose it to the network. IncidentReview enforces loopback-only endpoints.
-
-If Ollama is not running, AI features are disabled and the app remains fully functional.
-
----
-
-## Demo mode and fixtures
-
-- `fixtures/demo/`: sanitized dataset for UI screenshots
-- `fixtures/golden/`: golden dataset used for snapshot tests
-
-The app must provide:
-- “Seed demo dataset”
-- “Export sanitized dataset”
-- “Backup/restore database”
-
----
-
-## Verification standards
-
-- No silent error handling
-- No “default to zero” for unknown values; prefer NULL + validation warnings
-- All dashboards must reconcile to incident table totals
-- AI sections must be evidence-cited or explicitly marked UNKNOWN
-- Stable, reproducible report outputs for snapshot tests
-
----
+All metrics computation runs in Rust where the logic is deterministic and testable — no AI arithmetic. The AI layer is strictly read-only on the data model; it can only draft narrative text and must cite evidence. The frontend never exposes raw incident data outside the machine. Jira mappings and analysis configs are stored locally and travel with backup exports.
 
 ## License
 
-No license has been granted yet. Until a license file is added, treat this repository as all rights reserved.
-
-## Environment Variables
-
-<!-- AUTO-GENERATED:ENV START -->
-| Variable | Required | Description |
-|---|---|---|
-| `INCIDENTREVIEW_OLLAMA_BASE_URL` | optional | Base URL for the local Ollama API. Must remain loopback-only. |
-<!-- AUTO-GENERATED:ENV END -->
+MIT
