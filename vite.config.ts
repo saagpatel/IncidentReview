@@ -19,10 +19,22 @@ export default defineConfig(async () => ({
             return "vendor-echarts";
           }
 
+          if (id.includes("react-dom") || id.includes("/react/") || id.includes("scheduler")) {
+            return "vendor-react";
+          }
+
+          if (id.includes("i18next")) {
+            return "vendor-i18n";
+          }
+
+          if (id.includes("@tauri-apps")) {
+            return "vendor-tauri";
+          }
+
           return "vendor-misc";
-        }
-      }
-    }
+        },
+      },
+    },
   },
   server: {
     port: 1430,
@@ -32,11 +44,11 @@ export default defineConfig(async () => ({
       ? {
           protocol: "ws",
           host,
-          port: 1431
+          port: 1431,
         }
       : undefined,
     watch: {
-      ignored: ["**/src-tauri/**"]
-    }
-  }
+      ignored: ["**/src-tauri/**"],
+    },
+  },
 }));

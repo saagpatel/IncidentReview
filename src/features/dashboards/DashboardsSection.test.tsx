@@ -2,7 +2,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("echarts-for-react", () => ({ default: () => null }));
+vi.mock("./EChartRenderer", () => ({ default: () => null }));
 
 import { DashboardsSection } from "./DashboardsSection";
 
@@ -26,14 +26,36 @@ const dashboard = {
     },
   ],
   detection_story: {
-    detection_source_mix: [{ key: "monitoring", label: "Monitoring", count: 1, incident_ids: [101] }],
+    detection_source_mix: [
+      { key: "monitoring", label: "Monitoring", count: 1, incident_ids: [101] },
+    ],
     it_awareness_lag_buckets: [{ key: "0-5m", label: "0-5m", count: 1, incident_ids: [101] }],
   },
   vendor_service_story: {
     top_vendors_by_count: [{ key: "acmedb", label: "AcmeDB", count: 1, incident_ids: [101] }],
-    top_services_by_count: [{ key: "primary-sql", label: "Primary SQL", count: 1, incident_ids: [101] }],
-    top_vendors_by_pain: [{ key: "acmedb", label: "AcmeDB", count: 1, pain_sum: 10, pain_known_count: 1, incident_ids: [101] }],
-    top_services_by_pain: [{ key: "primary-sql", label: "Primary SQL", count: 1, pain_sum: 10, pain_known_count: 1, incident_ids: [101] }],
+    top_services_by_count: [
+      { key: "primary-sql", label: "Primary SQL", count: 1, incident_ids: [101] },
+    ],
+    top_vendors_by_pain: [
+      {
+        key: "acmedb",
+        label: "AcmeDB",
+        count: 1,
+        pain_sum: 10,
+        pain_known_count: 1,
+        incident_ids: [101],
+      },
+    ],
+    top_services_by_pain: [
+      {
+        key: "primary-sql",
+        label: "Primary SQL",
+        count: 1,
+        pain_sum: 10,
+        pain_known_count: 1,
+        incident_ids: [101],
+      },
+    ],
   },
   response_story: {
     time_to_mitigation_buckets: [{ key: "0-10m", label: "0-10m", count: 1, incident_ids: [101] }],
@@ -58,10 +80,12 @@ describe("DashboardsSection", () => {
         setIncidentFilterIds={setIncidentFilterIds}
         setIncidentFilterLabel={setIncidentFilterLabel}
         onOpenIncidentDetail={onOpenIncidentDetail}
-      />
+      />,
     );
 
-    expect(screen.getByText("Load the dashboard to view severity distribution and incidents.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Load the dashboard to view severity distribution and incidents."),
+    ).toBeInTheDocument();
 
     rerender(
       <DashboardsSection
@@ -73,16 +97,16 @@ describe("DashboardsSection", () => {
         setIncidentFilterIds={setIncidentFilterIds}
         setIncidentFilterLabel={setIncidentFilterLabel}
         onOpenIncidentDetail={onOpenIncidentDetail}
-      />
+      />,
     );
 
     expect(screen.getByText("Incident Count")).toBeInTheDocument();
     expect(screen.getByText("Database saturation")).toBeInTheDocument();
     expect(screen.getByRole("group", { name: "Dashboard filters" })).toContainElement(
-      screen.getByRole("button", { name: "Clear filter" })
+      screen.getByRole("button", { name: "Clear filter" }),
     );
     expect(screen.getByRole("group", { name: "Dashboard filters" })).toContainElement(
-      screen.getByRole("button", { name: "Clear incident filter" })
+      screen.getByRole("button", { name: "Clear incident filter" }),
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Database saturation" }));
