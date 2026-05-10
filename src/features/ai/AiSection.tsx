@@ -20,6 +20,16 @@ import { guidanceForAiErrorCode } from "../../lib/ai_guidance";
 import { computeAiGate } from "./ai_gating";
 
 type EvidenceSourceType = "sanitized_export" | "slack_transcript" | "incident_report_md" | "freeform_text";
+type DraftSectionId =
+  | "exec_summary"
+  | "incident_highlights_top_n"
+  | "theme_analysis"
+  | "action_plan_next_quarter"
+  | "quarter_narrative_recap";
+
+const THEME_SYNTHESIS_PROMPT =
+  "Synthesize 3-5 recurring incident themes from the selected evidence. For each theme, include the operational pattern, affected service or vendor when known, and one concrete next-quarter action. Cite every factual claim with the selected chunks.";
+const THEME_SYNTHESIS_SEARCH_QUERY = "recurring incident themes vendor service mitigation customer impact";
 
 function defaultOriginKindForType(t: EvidenceSourceType): "file" | "directory" | "paste" {
   if (t === "sanitized_export") return "directory";
@@ -98,9 +108,7 @@ export function AiSection(props: { onToast: (t: { kind: "success" | "error"; tit
     }>;
   }>(null);
   const [selectedCitationChunkIds, setSelectedCitationChunkIds] = useState<string[]>([]);
-  const [draftSectionId, setDraftSectionId] = useState<
-    "exec_summary" | "incident_highlights_top_n" | "theme_analysis" | "action_plan_next_quarter" | "quarter_narrative_recap"
-  >("exec_summary");
+  const [draftSectionId, setDraftSectionId] = useState<DraftSectionId>("exec_summary");
   const [draftQuarterLabel, setDraftQuarterLabel] = useState<string>("Q1 2026");
   const [draftPrompt, setDraftPrompt] = useState<string>("Draft an executive summary based on the evidence.");
   const [draftMarkdown, setDraftMarkdown] = useState<string>("");
@@ -164,7 +172,7 @@ export function AiSection(props: { onToast: (t: { kind: "success" | "error"; tit
     return {
       exec_summary: "Draft an executive summary based on the evidence.",
       incident_highlights_top_n: "Draft the top incident highlights based on the evidence.",
-      theme_analysis: "Draft a theme analysis based on the evidence.",
+      theme_analysis: THEME_SYNTHESIS_PROMPT,
       action_plan_next_quarter: "Draft an action plan for next quarter based on the evidence.",
       quarter_narrative_recap: "Draft a short narrative recap of the quarter based on the evidence.",
     } as const;
@@ -468,6 +476,12 @@ export function AiSection(props: { onToast: (t: { kind: "success" | "error"; tit
       next[nextIdx] = tmp;
       return next;
     });
+  }
+
+  function prepareThemeSynthesis() {
+    setDraftSectionId("theme_analysis");
+    setDraftPrompt(THEME_SYNTHESIS_PROMPT);
+    setSearchQuery((cur) => cur.trim() || THEME_SYNTHESIS_SEARCH_QUERY);
   }
 
   async function onRevealFullChunk(chunkId: string) {
@@ -968,10 +982,17 @@ export function AiSection(props: { onToast: (t: { kind: "success" | "error"; tit
         <p className="hint">
           Privacy note: stored drafts may contain sensitive text. This setting affects only local persistence in the workspace DB.
         </p>
+        <div className="actions">
+          <button className="btn" type="button" onClick={prepareThemeSynthesis}>
+            Prepare Theme Synthesis
+          </button>
+          <span className="pill pill--small">citations {selectedCitationChunkIds.length}</span>
+          <span className="pill pill--small">section {draftSectionId}</span>
+        </div>
         <div className="grid">
           <label>
             Section
-            <select value={draftSectionId} onChange={(e) => setDraftSectionId(e.target.value as never)}>
+            <select value={draftSectionId} onChange={(e) => setDraftSectionId(e.target.value as DraftSectionId)}>
               <option value="exec_summary">exec_summary</option>
               <option value="incident_highlights_top_n">incident_highlights_top_n</option>
               <option value="theme_analysis">theme_analysis</option>
