@@ -428,6 +428,40 @@ body {
   color: rgba(255, 255, 255, 0.86);
 }
 
+.drawerMeta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
+  margin: 0;
+}
+
+.drawerMeta div {
+  min-width: 0;
+}
+
+.drawerMeta dt {
+  color: var(--muted);
+  font-size: 11px;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+}
+
+.drawerMeta dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.emptyState {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  color: var(--muted);
+}
+
+.emptyState strong {
+  color: var(--text);
+}
+
 .modalOverlay {
   position: fixed;
   inset: 0;

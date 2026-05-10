@@ -64,6 +64,7 @@ export function IncidentDetailDrawer(props: {
   onClose: () => void;
 }) {
   if (!props.open) return null;
+  const incident = props.detail?.incident;
 
   return (
     <div
@@ -96,6 +97,40 @@ export function IncidentDetailDrawer(props: {
 
         {props.detail && (
           <div className="drawerBody">
+            <section className="drawerSection">
+              <h3>Incident context</h3>
+              <dl className="drawerMeta">
+                <div>
+                  <dt>Severity</dt>
+                  <dd>{incident?.severity ?? "UNKNOWN"}</dd>
+                </div>
+                <div>
+                  <dt>Detection source</dt>
+                  <dd>{incident?.detection_source ?? "UNKNOWN"}</dd>
+                </div>
+                <div>
+                  <dt>Vendor</dt>
+                  <dd>{incident?.vendor ?? "UNKNOWN"}</dd>
+                </div>
+                <div>
+                  <dt>Service</dt>
+                  <dd>{incident?.service ?? "UNKNOWN"}</dd>
+                </div>
+                <div>
+                  <dt>Impact</dt>
+                  <dd>{formatPercent(incident?.impact_pct)}</dd>
+                </div>
+                <div>
+                  <dt>Service health</dt>
+                  <dd>{formatPercent(incident?.service_health_pct)}</dd>
+                </div>
+                <div>
+                  <dt>Fingerprint</dt>
+                  <dd className="mono">{incident?.fingerprint ?? "UNKNOWN"}</dd>
+                </div>
+              </dl>
+            </section>
+
             <section className="drawerSection">
               <h3>Computed metrics (deterministic)</h3>
               <ul className="list">
@@ -134,6 +169,18 @@ export function IncidentDetailDrawer(props: {
             </section>
 
             <section className="drawerSection">
+              <h3>Timestamp evidence</h3>
+              <dl className="drawerMeta">
+                <TimestampEvidence label="Started" value={incident?.start_ts} raw={incident?.start_ts_raw} />
+                <TimestampEvidence label="First observed" value={incident?.first_observed_ts} raw={incident?.first_observed_ts_raw} />
+                <TimestampEvidence label="IT aware" value={incident?.it_awareness_ts} raw={incident?.it_awareness_ts_raw} />
+                <TimestampEvidence label="Acknowledged" value={incident?.ack_ts} raw={incident?.ack_ts_raw} />
+                <TimestampEvidence label="Mitigated" value={incident?.mitigate_ts} raw={incident?.mitigate_ts_raw} />
+                <TimestampEvidence label="Resolved" value={incident?.resolve_ts} raw={incident?.resolve_ts_raw} />
+              </dl>
+            </section>
+
+            <section className="drawerSection">
               <h3>Timeline events</h3>
               {props.detail.timeline_events.length === 0 ? (
                 <p className="muted">No timeline events attached.</p>
@@ -169,6 +216,24 @@ export function IncidentDetailDrawer(props: {
           </div>
         )}
       </aside>
+    </div>
+  );
+}
+
+function formatPercent(value: number | null | undefined): string {
+  if (value == null) return "UNKNOWN";
+  return `${value}%`;
+}
+
+function TimestampEvidence(props: { label: string; value?: string | null; raw?: string | null }) {
+  const display = props.value ?? props.raw ?? "UNKNOWN";
+  const suffix = props.value ? "canonical" : props.raw ? "raw" : "missing";
+  return (
+    <div>
+      <dt>{props.label}</dt>
+      <dd>
+        <span className="mono">{display}</span> <span className="muted">({suffix})</span>
+      </dd>
     </div>
   );
 }

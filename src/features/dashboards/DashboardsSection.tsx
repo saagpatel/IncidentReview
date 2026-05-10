@@ -65,6 +65,12 @@ export function DashboardsSection(props: {
     if (!props.selectedSeverity) return props.dashboard.incidents;
     return props.dashboard.incidents.filter((i) => (i.severity ?? "UNKNOWN") === props.selectedSeverity);
   }, [props.dashboard, props.incidentFilterIds, props.selectedSeverity]);
+  const activeFilterLabel =
+    props.incidentFilterIds && props.incidentFilterIds.length > 0
+      ? props.incidentFilterLabel || `${props.incidentFilterIds.length} incidents`
+      : props.selectedSeverity
+        ? `severity:${props.selectedSeverity}`
+        : "All incidents";
 
   const severityChartOption = useMemo(() => {
     if (!props.dashboard) return null;
@@ -260,10 +266,12 @@ export function DashboardsSection(props: {
                   <div className="kpi__value">{props.selectedSeverity ?? "ALL"}</div>
                 </div>
                 <div className="kpi">
-                  <div className="kpi__label">Incident Filter</div>
-                  <div className="kpi__value">
-                    {!props.incidentFilterIds || props.incidentFilterIds.length === 0 ? "NONE" : `${props.incidentFilterIds.length} selected`}
-                  </div>
+                  <div className="kpi__label">Active View</div>
+                  <div className="kpi__value">{activeFilterLabel}</div>
+                </div>
+                <div className="kpi">
+                  <div className="kpi__label">Visible Incidents</div>
+                  <div className="kpi__value">{filteredIncidents.length}</div>
                 </div>
               </div>
 
@@ -340,21 +348,32 @@ export function DashboardsSection(props: {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredIncidents.map((i) => (
-                      <tr key={i.id}>
-                        <td className="mono">{i.external_id ?? "NO_EXTERNAL_ID"}</td>
-                        <td>
-                          <button className="linkBtn" type="button" onClick={() => void props.onOpenIncidentDetail(i.id)}>
-                            {i.title}
-                          </button>
+                    {filteredIncidents.length === 0 ? (
+                      <tr>
+                        <td colSpan={7}>
+                          <div className="emptyState">
+                            <strong>No incidents match this view.</strong>
+                            <span>Clear the active filter or load a broader dashboard set.</span>
+                          </div>
                         </td>
-                        <td>{i.severity ?? "UNKNOWN"}</td>
-                        <td className="mono">{formatSeconds(i.it_awareness_lag_seconds)}</td>
-                        <td className="mono">{formatSeconds(i.time_to_mitigation_seconds)}</td>
-                        <td className="mono">{formatSeconds(i.mttr_seconds)}</td>
-                        <td className="mono">{i.warning_count}</td>
                       </tr>
-                    ))}
+                    ) : (
+                      filteredIncidents.map((i) => (
+                        <tr key={i.id}>
+                          <td className="mono">{i.external_id ?? "NO_EXTERNAL_ID"}</td>
+                          <td>
+                            <button className="linkBtn" type="button" onClick={() => void props.onOpenIncidentDetail(i.id)}>
+                              {i.title}
+                            </button>
+                          </td>
+                          <td>{i.severity ?? "UNKNOWN"}</td>
+                          <td className="mono">{formatSeconds(i.it_awareness_lag_seconds)}</td>
+                          <td className="mono">{formatSeconds(i.time_to_mitigation_seconds)}</td>
+                          <td className="mono">{formatSeconds(i.mttr_seconds)}</td>
+                          <td className="mono">{i.warning_count}</td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>

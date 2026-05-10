@@ -27,19 +27,19 @@ describe("IncidentDetailDrawer", () => {
             title: "Incident INC_001",
             description: null,
             severity: null,
-            detection_source: null,
-            vendor: null,
-            service: null,
-            impact_pct: null,
-            service_health_pct: null,
-            start_ts: null,
+            detection_source: "monitoring",
+            vendor: "AcmeDB",
+            service: "Primary SQL",
+            impact_pct: 80,
+            service_health_pct: 25,
+            start_ts: "2026-02-17T00:00:00Z",
             first_observed_ts: null,
             it_awareness_ts: null,
             ack_ts: null,
             mitigate_ts: null,
             resolve_ts: null,
             start_ts_raw: null,
-            first_observed_ts_raw: null,
+            first_observed_ts_raw: "Feb 16 16:01 PST",
             it_awareness_ts_raw: null,
             ack_ts_raw: null,
             mitigate_ts_raw: null,
@@ -72,6 +72,10 @@ describe("IncidentDetailDrawer", () => {
     );
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(screen.getByText("Incident context")).toBeInTheDocument();
+    expect(screen.getByText("Primary SQL")).toBeInTheDocument();
+    expect(screen.getByText("Timestamp evidence")).toBeInTheDocument();
+    expect(screen.getByText("Feb 16 16:01 PST")).toBeInTheDocument();
     expect(screen.getByText("Computed metrics (deterministic)")).toBeInTheDocument();
     expect(screen.getByText("No warnings.")).toBeInTheDocument();
     expect(screen.getByText("(redacted)")).toBeInTheDocument();
