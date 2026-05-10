@@ -101,6 +101,7 @@ describe("DashboardsSection", () => {
     );
 
     expect(screen.getByText("Incident Count")).toBeInTheDocument();
+    expect(screen.getByText("Visible Incidents")).toBeInTheDocument();
     expect(screen.getByText("Database saturation")).toBeInTheDocument();
     expect(screen.getByRole("group", { name: "Dashboard filters" })).toContainElement(
       screen.getByRole("button", { name: "Clear filter" }),
@@ -115,5 +116,24 @@ describe("DashboardsSection", () => {
     expect(screen.getByRole("button", { name: "Clear incident filter" })).toBeDisabled();
     fireEvent.click(screen.getByRole("button", { name: "Clear filter" }));
     expect(setSelectedSeverity).toHaveBeenCalledWith(null);
+  });
+
+  it("shows a clear empty state for filtered dashboard drill-downs", () => {
+    render(
+      <DashboardsSection
+        dashboard={dashboard}
+        selectedSeverity={null}
+        setSelectedSeverity={vi.fn()}
+        incidentFilterIds={[999]}
+        incidentFilterLabel="vendor:missing"
+        setIncidentFilterIds={vi.fn()}
+        setIncidentFilterLabel={vi.fn()}
+        onOpenIncidentDetail={vi.fn()}
+      />,
+    );
+
+    expect(screen.getAllByText("vendor:missing")).toHaveLength(2);
+    expect(screen.getByText("No incidents match this view.")).toBeInTheDocument();
+    expect(screen.getByText("Clear the active filter or load a broader dashboard set.")).toBeInTheDocument();
   });
 });
