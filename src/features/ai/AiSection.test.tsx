@@ -109,4 +109,40 @@ describe("AiSection", () => {
     });
     expect(addEvidence).toBeEnabled();
   });
+
+  it("prepares the evidence-backed theme synthesis draft flow", async () => {
+    mockInvokeValidated.mockImplementation(async (command: string) => {
+      if (command === "ai_health_check") return { ok: true, message: "healthy" };
+      if (command === "ai_models_list") return [{ name: "llama3.2:latest" }, { name: "nomic-embed-text:latest" }];
+      if (command === "ai_evidence_list_sources") {
+        return [
+          {
+            source_id: "source_1",
+            type: "incident_report_md",
+            origin: { kind: "file", path: "/tmp/report.md" },
+            label: "Incident report",
+            created_at: "2026-02-17T00:00:00Z",
+          },
+        ];
+      }
+      if (command === "ai_evidence_list_chunks") return [];
+      if (command === "ai_index_status") {
+        return { ready: true, chunk_count: 1, chunks_total: 1, model: "nomic-embed-text:latest", dims: 768, updated_at: "2026-02-17T00:00:00Z" };
+      }
+      if (command === "ai_drafts_list") return [];
+      throw new Error(`unexpected command: ${command}`);
+    });
+
+    render(<AiSection onToast={vi.fn()} />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/AI_CITATION_REQUIRED/)).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Prepare Theme Synthesis" }));
+
+    expect((screen.getByLabelText("Section") as HTMLSelectElement).value).toBe("theme_analysis");
+    expect((screen.getByLabelText("Query") as HTMLInputElement).value).toContain("recurring incident themes");
+    expect((screen.getByLabelText("Prompt") as HTMLTextAreaElement).value).toContain("3-5 recurring incident themes");
+  });
 });
