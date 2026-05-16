@@ -314,3 +314,43 @@ Source: `.codex/verify.commands`
 - Required checks are blocking when `fail` or `not-run`: lint, typecheck, tests, coverage, diff coverage, docs check.
 - Existing reviewer -> fixer -> reviewer loop is required before merge.
 - Use `.codex/skills/testing-foundation/SKILL.md` and `.codex/skills/documentation-standard/SKILL.md` for feature work by default.
+
+<!-- portfolio-context:start -->
+
+# Portfolio Context
+
+## What This Project Is
+
+IncidentReview is an active local project in the /Users/d/Projects portfolio.
+
+## Current State
+
+Portfolio truth currently marks this project as `active` with `boilerplate` context. Phase 104 recovered minimum-viable context so future sessions can resume without rediscovery.
+
+## Stack
+
+| Layer          | Technology                                 |
+| -------------- | ------------------------------------------ |
+| Desktop shell  | Tauri 2                                    |
+| Frontend       | React, TypeScript, Tailwind CSS            |
+| Charts         | ECharts                                    |
+| Metrics engine | Rust — deterministic, audited calculations |
+| AI narrative   | Ollama (localhost only, optional)          |
+| Storage        | SQLite (local app data dir)                |
+
+## How To Run
+
+```bash
+# Start in development mode
+npm run tauri dev
+```
+
+## Known Risks
+
+- This repo only has minimum-viable recovery context today; deeper handoff details may still live in the README and supporting docs.
+
+## Next Recommended Move
+
+Use this context plus the README and supporting docs to resume the next active task, then promote the repo beyond minimum-viable by capturing a dedicated handoff, roadmap, or discovery artifact.
+
+<!-- portfolio-context:end -->
