@@ -11,6 +11,9 @@ fi
 pattern='^codex/(feat|fix|chore|refactor|docs|test|perf|ci|spike|hotfix)/[a-z0-9]+(-[a-z0-9]+)*$'
 
 if [[ "$branch" == "main" || "$branch" == "master" ]]; then
+  if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then
+    exit 0
+  fi
   echo "Direct work on $branch is blocked."
   exit 1
 fi
