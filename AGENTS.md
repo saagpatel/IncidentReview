@@ -2,13 +2,10 @@
 
 <!-- comm-contract:start -->
 
-## Communication Contract (Global)
+## Communication Contract
 
-- Follow `/Users/d/.codex/policies/communication/BigPictureReportingV1.md` for all user-facing updates.
-- Use exact section labels from `BigPictureReportingV1.md` for default status/progress updates.
-- Keep default updates beginner-friendly, big-picture, and low-noise.
-- Keep technical details in internal artifacts unless explicitly requested by the user.
-- Honor toggles literally: `simple mode`, `show receipts`, `tech mode`, `debug mode`.
+- Inherit global Codex communication and reporting rules from `/Users/d/.codex/AGENTS.override.md` and `/Users/d/.codex/policies/communication/BigPictureReportingV1.md`.
+- Repo-specific instructions below add project constraints only; do not restate global voice or status-reporting rules here.
 <!-- comm-contract:end -->
 
 This repository is built and maintained under strict verification and audit standards. Follow these instructions exactly.
@@ -247,73 +244,12 @@ Do not add additional commands without adding them to `package.json` scripts and
 - [ ] Demo dataset + sanitized export + backup/restore
 - [ ] HINSITE.md maintained with verification logs
 
-## Codex Reliability Contract
+## Inherited Operating Rules
 
-### Canonical Verification Commands (Source of Truth)
-
-Source: `.codex/verify.commands`
-
-- `pnpm install --frozen-lockfile --ignore-scripts`
-- `pnpm git:guard:all`
-- `pnpm lint`
-- `pnpm typecheck`
-- `pnpm test:coverage`
-- `pnpm test:integration`
-- `pnpm test:contracts`
-- `pnpm test:e2e:smoke`
-- `pnpm docs:generate`
-- `pnpm docs:check`
-- `pnpm policy:require-tests-docs`
-- `cargo test -p qir_core --all-features`
-- `cargo test -p qir_ai --all-features`
-- `pnpm build`
-- `pnpm perf:bundle`
-- `node scripts/perf/compare-metric.mjs .perf-baselines/bundle.json .perf-results/bundle.json totalBytes 0.08`
-- `pnpm perf:build`
-- `node scripts/perf/compare-metric.mjs .perf-baselines/build-time.json .perf-results/build-time.json buildMs 0.15`
-- `pnpm perf:assets`
-- `pnpm perf:memory`
-- `PERF_REQUIRED_METRICS=bundle,build,assets,memory PERF_ENFORCE_SUMMARY=1 pnpm perf:summary`
-
-### Definition of Done
-
-- All commands in `.codex/verify.commands` pass via `.codex/scripts/run_verify_commands.sh`.
-- No open `critical` or `high` `ReviewFindingV1` findings.
-- Diff scope matches approved task scope.
-- Security checks (secrets, dependency, and SAST) are clean or explicitly waived with owner + expiry.
-
-### Agent Contract
-
-- Reviewer agent: read-only and emits only `ReviewFindingV1` findings.
+- Inherit global git, review/fix, testing, docs, UI, security, skill-use, and reporting gates from `/Users/d/.codex/AGENTS.md` and active session instructions.
+- Use `.codex/verify.commands` and `.codex/scripts/run_verify_commands.sh` as this repo-local verification authority when present.
 - QA reviewer mode must use `/Users/d/Projects/IncidentReview/.codex/prompts/test-critic.md` for test/doc depth passes.
-- Fixer agent: applies accepted findings in severity order and reports exact file patches + verification.
-- Final verifier: re-runs `.codex/scripts/run_verify_commands.sh` and summarizes `GateReportV1`.
-
-## UI Hard Gates (Required for frontend/UI changes)
-
-1. Read-only reviewer outputs `UIFindingV1[]` (`/Users/d/.codex/contracts/UIFindingV1.schema.json`).
-2. Fixer applies accepted findings in severity order: `P0 -> P1 -> P2 -> P3`.
-3. Required state coverage per changed UI surface: loading, empty, error, success, disabled, focus-visible.
-4. Required pre-done gates:
-   - `pnpm ui:gate:static`
-   - `pnpm ui:gate:regression`
-   - Lighthouse CI workflow (`.github/workflows/lighthouse.yml`)
-5. Done-state is blocked if any required UI gate is `fail` or `not-run`.
-
-## Definition of Done: Tests + Docs (Blocking)
-
-- Any production code change must include meaningful test updates in the same PR.
-- Meaningful tests must include at least:
-  - one primary behavior assertion
-  - two non-happy-path assertions (edge, boundary, invalid input, or failure mode)
-- Trivial assertions are forbidden (`expect(true).toBe(true)`, snapshot-only without semantic assertions, render-only smoke tests without behavior checks).
-- Mock only external boundaries (network, clock, randomness, third-party SDKs). Do not mock the unit under test.
-- UI changes must cover state matrix: loading, empty, error, success, disabled, focus-visible.
 - Tauri command contract changes must update command contract docs and examples in docs.
-- Architecture-impacting changes must include an ADR in `/docs/adr/`.
-- Required checks are blocking when `fail` or `not-run`: lint, typecheck, tests, coverage, diff coverage, docs check.
-- Existing reviewer -> fixer -> reviewer loop is required before merge.
-- Use `.codex/skills/testing-foundation/SKILL.md` and `.codex/skills/documentation-standard/SKILL.md` for feature work by default.
 
 <!-- portfolio-context:start -->
 
