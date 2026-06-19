@@ -71,6 +71,9 @@
   "devDependencies": {
     "@asteasolutions/zod-to-openapi": "^8.1.0",
     "@axe-core/playwright": "^4.11.0",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@commitlint/cz-commitlint": "^19.8.1",
     "@faker-js/faker": "^10.1.0",
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.56.1",
@@ -86,6 +89,7 @@
     "@typescript-eslint/parser": "^8.26.0",
     "@vitejs/plugin-react": "^4.6.0",
     "@vitest/coverage-v8": "^3.2.4",
+    "commitizen": "^4.3.1",
     "eslint": "^8.57.1",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^5.2.0",
@@ -93,8 +97,10 @@
     "eslint-plugin-tailwindcss": "^3.18.2",
     "fishery": "^2.3.1",
     "globals": "^16.4.0",
+    "husky": "^9.1.7",
     "jsdom": "^28.1.0",
     "lighthouse": "^12.8.2",
+    "lint-staged": "^15.5.2",
     "msw": "^2.11.3",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.7.1",
@@ -104,15 +110,9 @@
     "typedoc": "^0.28.14",
     "typedoc-plugin-markdown": "^4.9.0",
     "typescript": "~5.8.3",
-    "vite": "^7.0.4",
+    "vite": "^7.3.5",
     "vitest": "^3.0.7",
-    "web-vitals": "^5.1.0",
-    "@commitlint/cli": "^19.8.1",
-    "@commitlint/config-conventional": "^19.8.1",
-    "@commitlint/cz-commitlint": "^19.8.1",
-    "commitizen": "^4.3.1",
-    "husky": "^9.1.7",
-    "lint-staged": "^15.5.2"
+    "web-vitals": "^5.1.0"
   },
   "config": {
     "commitizen": {
