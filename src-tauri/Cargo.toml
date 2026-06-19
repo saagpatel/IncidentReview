@@ -3,6 +3,7 @@ name = "incidentreview"
 version = "0.1.0"
 description = "IncidentReview desktop app"
 authors = ["IncidentReview"]
+license = "MIT"
 edition = "2021"
 
 [lib]
